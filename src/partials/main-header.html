@@ -1,0 +1,24 @@
+<header class="header">
+  <form action="submit" class="header__form">
+    <div class="header__form-search">
+      <input
+        type="text"
+        name="searchQuery"
+        autofocus
+        autocomplete="off"
+        placeholder="Movie search"
+        class="header__form-input"
+      />
+      <button
+        type="submit"
+        aria-label="search-button"
+        class="header__search-btn"
+      >
+        <svg class="header__form-icon" width="12" height="12">
+          <use href="/src/images/icons.svg#icon-search"></use>
+        </svg>
+      </button>
+    </div>
+  </form>
+  <p class="header__notification"></p>
+</header>

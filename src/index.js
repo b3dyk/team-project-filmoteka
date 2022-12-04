@@ -1,5 +1,5 @@
-import './sass/index.scss';
+import { renderTrendingMovies } from './js/API/get-trending';
 
-import './js/fetch';
-import './js/modal-film-card';
-import './js/modal-students';
+import { onFormSubmit } from './js/gallery';
+
+import { refs } from './js/refs';
