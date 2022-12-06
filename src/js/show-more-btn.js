@@ -1,25 +1,3 @@
-// const refs = {
-//   blockShowMore: document.querySelector('.show-more'),
-//   iconShowMore: document.querySelector('.show-more__icon'),
-//   textShowMore: document.querySelector('.show-more__text'),
-// };
-
-// function displayShowMore() {
-//   refs.blockShowMore.style.display = 'flex';
-// }
-
-// function addMoreIconRotate() {
-//   refs.iconShowMore.classList.add('rotated');
-//   refs.textShowMore.style.opacity = '0.5';
-//   refs.textShowMore.textContent = 'Wait...';
-// }
-
-// function removeMoreIconRotate() {
-//   refs.iconShowMore.classList.remove('rotated');
-//   refs.textShowMore.style.opacity = '1';
-//   refs.textShowMore.textContent = 'Show more';
-// }
-
 export default class ShowMore {
   constructor({ selector, hidden = false }) {
     this.refs = this.getRefs(selector);

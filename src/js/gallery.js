@@ -33,9 +33,8 @@ export async function getMovies(page) {
   const movies = new Movies(APIKey);
 
   try {
-    const { results, total_pages } = await movies.getTrendingMovies(page);
+    const { results } = await movies.getTrendingMovies(page);
     console.log('results ', results);
-
 
     if (results.length === 0) {
       throw new Error(
@@ -60,10 +59,3 @@ export async function getMovies(page) {
     console.log(error.message);
   }
 }
-
-
-
-
-
-
-

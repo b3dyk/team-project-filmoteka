@@ -1,6 +1,5 @@
 import { Movies } from './fetch';
 import refs from './refs';
-import ShowMore from './show-more-btn';
 
 const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
 
