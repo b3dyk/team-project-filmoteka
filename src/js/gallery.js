@@ -5,10 +5,23 @@ import { markupFilmoteka } from './markup';
 import { APIKey } from './apikey';
 
 // const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
+// import { markupFilmoteka, getGenres, APIKey } from './markup';
+import refs from './refs';
+
+let searchValue = 'cat';
+
+refs.searchForm.addEventListener('submit', onSubmitForm);
+
+function onSubmitForm(evt) {
+  evt.preventDefault();
+  searchValue = evt.currentTarget.elements.searchQuery.value;
+  clearFilmoteka();
+  Start();
+}
 
 Start();
 
-async function Start() {
+export async function Start() {
   addLoadingSpinner();
 
   // await getGenres();
