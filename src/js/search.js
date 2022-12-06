@@ -1,10 +1,11 @@
 import { Movies } from './fetch';
-import { markupFilmoteka, getGenres } from './markup';
+import { markupFilmoteka } from './markup';
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import clearFilmoteka from './clearFilmoteka';
 import refs from './refs';
+import { APIKey } from './apikey';
 
-const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
+// const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
 
 let searchValue = 'cat';
 
@@ -20,18 +21,19 @@ function onSubmitForm(evt) {
 }
 
 async function Start() {
-  await getGenres();
+  // await getGenres();
 
-  await getMovies();
+  await searchMovies(searchValue);
 
   removeLoadingSpinner();
 }
 
-async function getMovies() {
+// Page from pagination, query from LS
+export async function searchMovies(query, page = 1) {
   const movies = new Movies(APIKey);
 
   try {
-    const { results } = await movies.searchMovies(searchValue);
+    const { results } = await movies.searchMovies(query, page);
 
     if (results.length === 0) {
       throw new Error(

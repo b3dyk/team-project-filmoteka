@@ -1,4 +1,5 @@
 import { Movies } from './fetch';
+import { markupGenresLibrary } from './genres';
 
 export default class ModalMovie {
   constructor(
@@ -63,6 +64,7 @@ export default class ModalMovie {
     } = data;
 
     genres = genres.map(item => item.name).join(', ');
+    // genres = markupGenresLibrary(genres);
     vote_average = vote_average.toFixed(1);
     popularity = popularity.toFixed(1);
     const markup = `<div>

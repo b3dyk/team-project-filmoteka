@@ -1,29 +1,29 @@
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import { Movies } from './fetch';
 import clearFilmoteka from './clearFilmoteka';
-import { markupFilmoteka, getGenres } from './markup';
+import { markupFilmoteka } from './markup';
+import { APIKey } from './apikey';
 
-const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
+// const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
 
 Start();
 
 async function Start() {
   addLoadingSpinner();
 
-  await getGenres();
+  // await getGenres();
   await getMovies();
 
   removeLoadingSpinner();
 }
 
 // Page from pagination
-export async function getMovies(page) {
+export async function getMovies(page = 1) {
   const movies = new Movies(APIKey);
 
   try {
     const { results } = await movies.getTrendingMovies(page);
     console.log('results ', results);
-
 
     if (results.length === 0) {
       throw new Error(
@@ -39,10 +39,3 @@ export async function getMovies(page) {
     console.log(error.message);
   }
 }
-
-
-
-
-
-
-
