@@ -5,6 +5,7 @@ import { Movies } from './fetch';
 import { getMovies, getAppendMovies } from './gallery';
 import { markupFilmoteka } from './markup';
 import moveUp from './move-up';
+import refs from './refs';
 import ShowMore from './show-more-btn';
 
 const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
@@ -39,8 +40,9 @@ export const nextOptions = {
 
 const container = document.getElementById('pagination');
 
+console.log(nextOptions.nextPage);
+
 function makePaginationOptions(totalResults = 20000) {
-  console.log(nextOptions.nextPage);
   return {
     totalItems: totalResults,
     itemsPerPage: 20,
@@ -69,21 +71,21 @@ function makePaginationOptions(totalResults = 20000) {
   };
 }
 
-export const options = makePaginationOptions();
+const paginationOptions = makePaginationOptions();
 
-export const pagination = new Pagination(container, options);
+export const paginationStart = new Pagination(
+  refs.paginationContainer,
+  paginationOptions
+);
 
-pagination.on('afterMove', updateMoviesList);
+paginationStart.on('afterMove', updateMoviesList);
 
-export function updateMoviesList(event) {
-  const currentPage = event.page;
+export async function updateMoviesList(event) {
+  const currentPageStart = event.page;
+  nextOptions.nextPage = currentPageStart;
 
-  console.log('currentPage -->', currentPage);
+  await getMovies(currentPageStart);
 
-  nextOptions.nextPage = currentPage;
-  console.log('nextPage in updateMoviesList -->', nextOptions.nextPage);
-
-  getMovies(currentPage);
   moveUp();
 }
 

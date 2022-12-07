@@ -3,7 +3,7 @@
   display: block;
   //   margin: 16px auto;
   width: 100%;
-  max-width: 336px;
+  max-width: 360px;
   margin: 0 auto;
 
   @include mq(desk) {
@@ -65,6 +65,8 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 16px;
+  align-items: center;
+  text-align: center;
 
   color: var(--accent-font-color);
 }

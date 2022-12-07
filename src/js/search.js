@@ -1,10 +1,18 @@
 import { Movies } from './fetch';
-import { markupFilmoteka, getGenres } from './markup';
+import { markupFilmoteka, getGenres, APIKey } from './markup';
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import clearFilmoteka from './clearFilmoteka';
 import refs from './refs';
 
-const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
+// *********************************************
+import Pagination from 'tui-pagination';
+import {
+  paginationStart,
+  updateMoviesList,
+  makePaginationOptions,
+} from './pagination';
+
+// *********************************************
 
 let searchValue = 'cat';
 
@@ -22,21 +30,28 @@ function onSubmitForm(evt) {
 async function Start() {
   await getGenres();
 
-  await getMovies();
+  await getMovies1();
 
   removeLoadingSpinner();
 }
 
-async function getMovies() {
+async function getMovies1(page) {
   const movies = new Movies(APIKey);
 
   try {
-    const { results } = await movies.searchMovies(searchValue);
+    const { results, total_results } = await movies.searchMovies(
+      searchValue,
+      page
+    );
+
+    await getPaginationBySearch(total_results);
 
     if (results.length === 0) {
-      throw new Error(
-        'Sorry, there are no movies matching your search query. Please try again.'
-      );
+      // throw new Error(
+      //   'Sorry, there are no movies matching your search query. Please try again.'
+      // );
+      onInvalidSearchQuery();
+      return;
     }
 
     clearFilmoteka();
@@ -46,4 +61,41 @@ async function getMovies() {
     console.log(error.name);
     console.log(error.message);
   }
+}
+
+function onInvalidSearchQuery() {
+  const notification = document.querySelector('#message');
+
+  notification.classList.remove('is-hidden');
+
+  const removeNotification = () => {
+    setTimeout(() => {
+      notification.classList.add('is-hidden');
+    }, 3000);
+  };
+
+  removeNotification();
+}
+
+// ************************************************
+
+async function getPaginationBySearch(total_results) {
+  const paginationOptions = makePaginationOptions(total_results);
+
+  paginationStart.off('afterMove', updateMoviesList);
+
+  const paginationBySearch = new Pagination(
+    refs.paginationContainer,
+    paginationOptions
+  );
+
+  paginationBySearch.on('afterMove', updateMoviesListBySearch);
+}
+
+async function updateMoviesListBySearch(event) {
+  const currentPageBySearch = event.page;
+
+  console.log('currentPageBySearch -->', currentPageBySearch);
+
+  await getMovies1(currentPageBySearch);
 }
