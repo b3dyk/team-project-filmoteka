@@ -2,7 +2,7 @@ import Pagination from 'tui-pagination';
 import 'tui-pagination/dist/tui-pagination.css';
 
 import { Movies } from './fetch';
-import { getMovies, getAppendMovies } from './gallery';
+import { getTrendMovies, getAppendMovies } from './gallery';
 import { markupFilmoteka } from './markup';
 import moveUp from './move-up';
 import refs from './refs';
@@ -12,11 +12,7 @@ const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
 
 const movies = new Movies(APIKey);
 
-// Додаємо екземпляр кнопки "Show more". Її спочатку не видно, але вона з'являється, якщо з бекенду приходить більше 20 фільмів. Умова прописана у функції getMovies()
 const showMore = new ShowMore({ selector: '.show-more', hidden: true });
-
-// Додаємо об'єкт, у якому ключ nextPage буде змінюватись і його значення буде динамічно підставлятися у options.page (це дає можливість при кожній зміні номера сторінки робити цю сторінку АКТИВНОЮ у пагінації)
-// Метод об'єкту addNextTrendingMovies() підтягує наступний масив фільмів і промальовує картки фільмів.
 
 export const nextOptions = {
   nextPage: 1,
@@ -84,7 +80,7 @@ export async function updateMoviesList(event) {
   const currentPageStart = event.page;
   nextOptions.nextPage = currentPageStart;
 
-  await getMovies(currentPageStart);
+  await getTrendMovies(currentPageStart);
 
   moveUp();
 }
