@@ -61,3 +61,18 @@ export async function getMovies(page) {
     console.log(error.message);
   }
 }
+
+export async function getAppendMovies(page) {
+  try {
+    const { results } = await movies.getTrendingMovies(page);
+
+    if (results.length < 20) {
+      showMore.hide();
+    }
+
+    markupFilmoteka(results);
+  } catch (error) {
+    console.log(error.name);
+    console.log(error.message);
+  }
+}

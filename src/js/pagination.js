@@ -103,12 +103,12 @@ export function updateMoviesList2(event) {
 async function onShowMoreClick() {
   showMore.disable();
 
-  await nextOptions.addNextTrendingMovies(pagination._currentPage);
+  await nextOptions.addNextTrendingMovies(paginationStart._currentPage);
 
-  pagination.off();
-  pagination.on('afterMove', updateMoviesList2);
-  pagination.movePageTo(nextOptions.nextPage);
+  paginationStart.off();
+  paginationStart.on('afterMove', updateMoviesList2);
+  paginationStart.movePageTo(nextOptions.nextPage);
   console.log('nextPage after showMore -->', nextOptions.nextPage);
-  pagination.off();
-  pagination.on('afterMove', updateMoviesList);
+  paginationStart.off();
+  paginationStart.on('afterMove', updateMoviesList);
 }
