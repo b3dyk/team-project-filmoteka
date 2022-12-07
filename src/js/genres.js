@@ -47,6 +47,7 @@ export function markupGenresLibrary(genres) {
 //Повертає масив об'єктів жанрів {id: 16, name: 'Animation'}
 function getGenres() {
   if (!localStorage.getItem('genres')) {
+    document.location.reload();
     return;
   }
 
