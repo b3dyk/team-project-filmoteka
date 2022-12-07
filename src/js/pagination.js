@@ -12,7 +12,7 @@ const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
 
 const movies = new Movies(APIKey);
 
-const showMore = new ShowMore({ selector: '.show-more', hidden: true });
+export const showMore = new ShowMore({ selector: '.show-more', hidden: true });
 
 export const nextOptions = {
   nextPage: 1,

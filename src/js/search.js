@@ -3,6 +3,8 @@ import { markupFilmoteka, getGenres, APIKey } from './markup';
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import clearFilmoteka from './clearFilmoteka';
 import refs from './refs';
+import { nextOptions } from './pagination';
+import { showMore } from './pagination';
 
 // *********************************************
 import Pagination from 'tui-pagination';
@@ -14,15 +16,18 @@ import {
 
 // *********************************************
 
+const movies = new Movies(APIKey);
+
 let searchValue = 'cat';
 const isHeaderMain = refs.header.classList.contains('header--home');
 if (isHeaderMain) {
   refs.searchForm.addEventListener('submit', onSubmitForm);
 }
 
-
 function onSubmitForm(evt) {
   evt.preventDefault();
+  nextOptions.nextPage = 1;
+
   searchValue = evt.currentTarget.elements.searchQuery.value;
   clearFilmoteka();
   addLoadingSpinner();
@@ -32,15 +37,11 @@ function onSubmitForm(evt) {
 
 async function Start() {
   await getGenres();
-
   await getMovies1();
-
   removeLoadingSpinner();
 }
 
 async function getMovies1(page) {
-  const movies = new Movies(APIKey);
-
   try {
     const { results, total_results } = await movies.searchMovies(
       searchValue,
@@ -101,4 +102,28 @@ async function updateMoviesListBySearch(event) {
   console.log('currentPageBySearch -->', currentPageBySearch);
 
   await getMovies1(currentPageBySearch);
+}
+
+async function getAppendSearchMovies(page) {
+  try {
+    const { results } = await movies.searchMovies(searchValue, page);
+
+    if (results.length < 20) {
+      showMore.hide();
+    }
+
+    markupFilmoteka(results);
+  } catch (error) {
+    console.log(error.name);
+    console.log(error.message);
+  }
+}
+
+function updateSearchList(event) {
+  console.log('event.page -->', event.page);
+
+  nextOptions.nextPage = event.page;
+  console.log('nextPage in updateSearchList -->', nextOptions.nextPage);
+
+  getAppendSearchMovies(event.page);
 }
