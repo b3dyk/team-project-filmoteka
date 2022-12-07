@@ -38,7 +38,7 @@ const container = document.getElementById('pagination');
 
 console.log(nextOptions.nextPage);
 
-function makePaginationOptions(totalResults = 20000) {
+export function makePaginationOptions(totalResults = 20000) {
   return {
     totalItems: totalResults,
     itemsPerPage: 20,
