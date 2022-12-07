@@ -14,8 +14,6 @@ if (isHeaderMain) {
   refs.searchForm.addEventListener('submit', onSubmitForm);
 }
 
-refs.searchForm.addEventListener('submit', onSubmitForm);
-
 function onSubmitForm(evt) {
   evt.preventDefault();
   searchValue = evt.currentTarget.elements.searchQuery.value;
