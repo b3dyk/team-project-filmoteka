@@ -1,5 +1,5 @@
 // import { Movies } from './fetch';
-import { markupGenres } from './genres';
+import { markupGenres, markupGenresLibrary } from './genres';
 import refs from './refs';
 
 // const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
@@ -49,7 +49,7 @@ export function markupCard(imgObj) {
 export function markupCardLibrary(imgObj) {
   const URI = `https://image.tmdb.org/t/p/w500${imgObj.poster_path}`;
   const date = new Date(imgObj.release_date);
-  const genres = markupGenres(imgObj.genres);
+  const genres = markupGenresLibrary(imgObj.genres);
 
   return `<li class="grid__item filmoteka__item" data-id="${imgObj.id}">
 			<div class="card" data-id="${imgObj.id}">

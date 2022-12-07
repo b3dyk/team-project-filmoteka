@@ -12,7 +12,7 @@ const refs = {
   queueBtn: document.querySelector('#queue-btn'),
 };
 
-let GENRES = [0];
+// let GENRES = [0];
 
 // Слухачі подій
 try {
@@ -23,10 +23,14 @@ try {
 } catch (error) {}
 try {
   refs.queueBtn.addEventListener('click', removeLibraryListWatched);
-} catch (error) {}
+} catch (error) {
+  console.log('error ', error);
+}
 
 Start();
 async function Start() {
+  let watchedFilm = [];
+  let watchedFilmId = [];
   // await getGenres();
 
   await checkWatched();
@@ -79,7 +83,7 @@ async function addWatched(event) {
 }
 
 // Створення контенту My library watched
-async function addLibraryListWatched() {
+function addLibraryListWatched() {
   refs.libraryList.innerHTML = '';
   refs.watchedBtn.classList.add('button--active');
   refs.queueBtn.classList.remove('button--active');

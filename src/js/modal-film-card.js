@@ -1,5 +1,5 @@
 import { Movies } from './fetch';
-// import { markupGenresLibrary } from './genres';
+import { markupGenresLibrary } from './genres';
 import { APIKey } from './apikey';
 
 export default class ModalMovie {
@@ -71,8 +71,8 @@ export default class ModalMovie {
       overview,
     } = data;
 
-    genres = genres.map(item => item.name).join(', ');
-    // genres = markupGenresLibrary(genres);
+    // genres = genres.map(item => item.name).join(', ');
+    genres = markupGenresLibrary(genres);
     vote_average = vote_average.toFixed(1);
     popularity = popularity.toFixed(1);
     const markup = `
