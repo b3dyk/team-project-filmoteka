@@ -27,13 +27,13 @@ async function Start() {
   addLoadingSpinner();
 
   await getGenres();
-  await getMovies();
+  await getTrendMovies();
 
   removeLoadingSpinner();
 }
 
 // Page from pagination
-export async function getMovies(page) {
+export async function getTrendMovies(page) {
   try {
     const { results, total_pages } = await movies.getTrendingMovies(page);
     console.log('results ', results);
