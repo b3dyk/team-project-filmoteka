@@ -17,6 +17,7 @@ function onSubmitForm(evt) {
   clearFilmoteka();
   Start();
 }
+
 Start();
 
 async function Start() {
