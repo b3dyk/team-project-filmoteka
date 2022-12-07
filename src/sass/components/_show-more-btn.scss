@@ -2,17 +2,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 40px;
-  margin: 0px auto 20px auto;
+  height: 60px;
+  margin: 0px auto;
   //   padding-top: 20px;
   //   padding-bottom: 20px;
   cursor: pointer;
   border-top: 1px solid #ececec;
   border-bottom: 1px solid #ececec;
-
-  @media screen and (min-width: 768px) {
-    height: 60px;
-  }
 
   &:hover,
   &:focus {
