@@ -9,8 +9,10 @@ import { APIKey } from './apikey';
 import refs from './refs';
 
 let searchValue = 'cat';
-
-refs.searchForm.addEventListener('submit', onSubmitForm);
+const isHeaderMain = refs.header.classList.contains('header--home');
+if (isHeaderMain) {
+  refs.searchForm.addEventListener('submit', onSubmitForm);
+}
 
 function onSubmitForm(evt) {
   evt.preventDefault();
@@ -25,13 +27,15 @@ export async function Start() {
   addLoadingSpinner();
 
   // await getGenres();
-  await getMovies();
+  // await getMovies();
+  // await getGenres();
+  await getTrendMovies();
 
   removeLoadingSpinner();
 }
 
 // Page from pagination
-export async function getMovies(page = 1) {
+export async function getTrendMovies(page) {
   const movies = new Movies(APIKey);
 
   try {

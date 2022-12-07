@@ -7,17 +7,22 @@ import { markupMyLibrary } from './markup';
 const refs = {
   libraryList: document.querySelector('#library-list'),
   filmotekaList: document.querySelector('#filmoteka-list'),
+  filmotekaItem: document.querySelector('.filmoteka__item'),
   watchedBtn: document.querySelector('#watched-btn'),
   myLibLink: document.querySelector('#mylib-link'),
   queueBtn: document.querySelector('#queue-btn'),
+  modalCard: document.querySelector('.modal'),
+  modalContent: document.querySelector('.modal__content'),
 };
 
 // let GENRES = [0];
 
 // Слухачі подій
+
 try {
-  refs.filmotekaList.addEventListener('click', addWatched);
+  refs.modalCard.addEventListener('click', addWatched);
 } catch (error) {}
+
 try {
   refs.watchedBtn.addEventListener('click', addLibraryListWatched);
 } catch (error) {}
@@ -59,16 +64,64 @@ async function checkWatched() {
   }
 }
 
+// ---------
+// async function openModal(event) {
+//   console.log(watchedFilmId.includes(JSON.parse(event.path[3].dataset.id)));
+//   const modalWatchedBtn = document.querySelector('#modal__watched-button');
+//   console.dir(refs.modalContent.children[2]);
+
+//   if (watchedFilmId.includes(JSON.parse(event.path[3].dataset.id))) {
+//     console.log(modalWatchedBtn);
+//     refs.modalWatchedBtn.textContent = 'remove Watched';
+//     refs.modalWatchedBtn.classList.remove('modal__button');
+//     refs.modalWatchedBtn.classList.add('modal__button--active');
+//     return;
+//   } else {
+//     refs.modalWatchedBtn.textContent = 'add to Watched';
+//     refs.modalWatchedBtn.classList.add('modal__button');
+//     refs.modalWatchedBtn.classList.remove('modal__button--active');
+//     return;
+//   }
+// }
+
 // Запис в LocalStorage
 async function addWatched(event) {
-  if (event.target.nodeName !== 'IMG') {
+  if (
+    event.target.nodeName !== 'BUTTON' ||
+    event.target.id !== 'modal__watched-button'
+  ) {
     return;
   }
-  //   console.dir(event.target.parentElement.parentElement.attributes[1].value);
   const movies = new Movies(APIKey);
+
+  if (event.target.classList[1] === 'modal__button--active') {
+    event.target.textContent = 'add to Watched';
+    event.target.classList.add('modal__button');
+    event.target.classList.remove('modal__button--active');
+
+    const namberFilm = watchedFilmId.indexOf(
+      JSON.parse(event.target.offsetParent.children[2].children[0].dataset.id)
+    );
+
+    await watchedFilmId.splice(namberFilm, 1);
+    await watchedFilm.splice(namberFilm, 1);
+    await localStorage.removeItem('watchedId');
+    await localStorage.removeItem('watched');
+
+    await localStorage.setItem('watchedId', JSON.stringify(watchedFilmId));
+    await localStorage.setItem('watched', JSON.stringify(watchedFilm));
+    return;
+  }
+
+  if (event.target.offsetParent.children[2].children[0].dataset.id) {
+    event.target.textContent = 'remove Watched';
+    event.target.classList.remove('modal__button');
+    event.target.classList.add('modal__button--active');
+  }
+
   try {
     const film = await movies.getMovieDetails(
-      event.target.parentElement.parentElement.attributes[1].value
+      event.target.offsetParent.children[2].children[0].dataset.id
     );
     if (!watchedFilmId.includes(film.id)) {
       watchedFilmId.push(film.id);
