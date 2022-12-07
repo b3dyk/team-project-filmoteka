@@ -9,8 +9,13 @@ const movies = new Movies(APIKey);
 const showMore = new ShowMore({ selector: '.show-more', hidden: true });
 
 let searchValue = 'cat';
+const isHeaderMain = refs.header.classList.contains('header--home');
+if (isHeaderMain) {
+  refs.searchForm.addEventListener('submit', onSubmitForm);
+}
 
 refs.searchForm.addEventListener('submit', onSubmitForm);
+
 function onSubmitForm(evt) {
   evt.preventDefault();
   searchValue = evt.currentTarget.elements.searchQuery.value;
