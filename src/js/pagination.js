@@ -1,16 +1,51 @@
 import Pagination from 'tui-pagination';
 import 'tui-pagination/dist/tui-pagination.css';
-import { getMovies } from './gallery';
+
+import { Movies } from './fetch';
+import { getMovies, getAppendMovies } from './gallery';
+import { markupFilmoteka } from './markup';
 import moveUp from './move-up';
+import ShowMore from './show-more-btn';
+
+const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
+
+const movies = new Movies(APIKey);
+
+// Додаємо екземпляр кнопки "Show more". Її спочатку не видно, але вона з'являється, якщо з бекенду приходить більше 20 фільмів. Умова прописана у функції getMovies()
+const showMore = new ShowMore({ selector: '.show-more', hidden: true });
+
+// Додаємо об'єкт, у якому ключ nextPage буде змінюватись і його значення буде динамічно підставлятися у options.page (це дає можливість при кожній зміні номера сторінки робити цю сторінку АКТИВНОЮ у пагінації)
+// Метод об'єкту addNextTrendingMovies() підтягує наступний масив фільмів і промальовує картки фільмів.
+
+export const nextOptions = {
+  nextPage: 1,
+  async addNextTrendingMovies() {
+    try {
+      this.nextPage += 1;
+      const { results, total_pages } = await movies.getTrendingMovies(
+        this.nextPage
+      );
+      markupFilmoteka(results);
+      showMore.enable();
+
+      if (total_pages === this.nextPage) {
+        showMore.hide();
+      }
+    } catch (error) {
+      console.log(error.name, error.message);
+    }
+  },
+};
 
 const container = document.getElementById('pagination');
 
-function makePaginationOptions(totalResults = 10000) {
+function makePaginationOptions(totalResults = 20000) {
+  console.log(nextOptions.nextPage);
   return {
     totalItems: totalResults,
     itemsPerPage: 20,
     visiblePages: 5,
-    page: 1,
+    page: nextOptions.nextPage,
     centerAlign: true,
     firstItemClassName: 'tui-first-child',
     lastItemClassName: 'tui-last-child',
@@ -34,18 +69,44 @@ function makePaginationOptions(totalResults = 10000) {
   };
 }
 
-const options = makePaginationOptions();
+export const options = makePaginationOptions();
 
 export const pagination = new Pagination(container, options);
 
 pagination.on('afterMove', updateMoviesList);
 
-function updateMoviesList(event) {
+export function updateMoviesList(event) {
   const currentPage = event.page;
 
   console.log('currentPage -->', currentPage);
 
-  getMovies(currentPage);
+  nextOptions.nextPage = currentPage;
+  console.log('nextPage in updateMoviesList -->', nextOptions.nextPage);
 
+  getMovies(currentPage);
   moveUp();
+}
+
+showMore.refs.blockShowMore.addEventListener('click', onShowMoreClick);
+
+export function updateMoviesList2(event) {
+  console.log('event.page -->', event.page);
+
+  nextOptions.nextPage = event.page;
+  console.log('nextPage in updateMoviesList -->', nextOptions.nextPage);
+
+  getAppendMovies(event.page);
+}
+
+async function onShowMoreClick() {
+  showMore.disable();
+
+  await nextOptions.addNextTrendingMovies(pagination._currentPage);
+
+  pagination.off();
+  pagination.on('afterMove', updateMoviesList2);
+  pagination.movePageTo(nextOptions.nextPage);
+  console.log('nextPage after showMore -->', nextOptions.nextPage);
+  pagination.off();
+  pagination.on('afterMove', updateMoviesList);
 }
