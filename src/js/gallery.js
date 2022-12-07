@@ -2,8 +2,8 @@ import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import { Movies } from './fetch';
 import clearFilmoteka from './clearFilmoteka';
 import { markupFilmoteka, getGenres, APIKey } from './markup';
-import ShowMore from './show-more-btn';
 import refs from './refs';
+import ShowMore from './show-more-btn';
 
 const movies = new Movies(APIKey);
 const showMore = new ShowMore({ selector: '.show-more', hidden: true });
@@ -44,8 +44,6 @@ export async function getTrendMovies(page) {
       );
     }
 
-    console.log(results);
-
     clearFilmoteka();
     showMore.hide();
 
@@ -57,8 +55,7 @@ export async function getTrendMovies(page) {
       showMore.enable();
     }
   } catch (error) {
-    console.log(error.name);
-    console.log(error.message);
+    console.log(error.name, error.message);
   }
 }
 

@@ -1,11 +1,11 @@
 import Pagination from 'tui-pagination';
-import 'tui-pagination/dist/tui-pagination.css';
-
-import { Movies } from './fetch';
+// import 'tui-pagination/dist/tui-pagination.css';
 import { getTrendMovies, getAppendMovies } from './gallery';
-import { markupFilmoteka } from './markup';
+// import { getMovies1 } from './search';
 import moveUp from './move-up';
 import refs from './refs';
+import { Movies } from './fetch';
+import { markupFilmoteka } from './markup';
 import ShowMore from './show-more-btn';
 
 const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
