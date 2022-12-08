@@ -4,43 +4,22 @@ import clearFilmoteka from './clearFilmoteka';
 import { markupFilmoteka } from './markup';
 import { APIKey } from './apikey';
 
-// const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
-// import { markupFilmoteka, getGenres, APIKey } from './markup';
-import refs from './refs';
-
-let searchValue = 'cat';
-const isHeaderMain = refs.header.classList.contains('header--home');
-if (isHeaderMain) {
-  refs.searchForm.addEventListener('submit', onSubmitForm);
-}
-
-function onSubmitForm(evt) {
-  evt.preventDefault();
-  searchValue = evt.currentTarget.elements.searchQuery.value;
-  clearFilmoteka();
-  Start();
-}
-
-Start();
-
-export async function Start() {
+// Page from pagination
+export async function initTrendMoviesList(page) {
   addLoadingSpinner();
 
-  // await getGenres();
-  // await getMovies();
-  // await getGenres();
-  await getTrendMovies();
+  const totalResults = await getTrendMovies(page);
 
   removeLoadingSpinner();
+
+  return totalResults;
 }
 
-// Page from pagination
-export async function getTrendMovies(page) {
+async function getTrendMovies(page) {
   const movies = new Movies(APIKey);
 
   try {
-    const { results } = await movies.getTrendingMovies(page);
-    console.log('results ', results);
+    const { results, total_results } = await movies.getTrendingMovies(page);
 
     if (results.length === 0) {
       throw new Error(
@@ -51,8 +30,9 @@ export async function getTrendMovies(page) {
     clearFilmoteka();
 
     markupFilmoteka(results);
+
+    return total_results;
   } catch (error) {
-    console.log(error.name);
     console.log(error.message);
   }
 }

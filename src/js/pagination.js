@@ -1,11 +1,11 @@
 import Pagination from 'tui-pagination';
 // import 'tui-pagination/dist/tui-pagination.css';
-import { getTrendMovies } from './gallery';
-// import { getMovies1 } from './search';
+import { initTrendMoviesList } from './gallery';
+import { initSearchMoviesList } from './search';
 import moveUp from './move-up';
 import refs from './refs';
 
-export function makePaginationOptions(totalResults = 10000) {
+function makePaginationOptions(totalResults = 10000) {
   return {
     totalItems: totalResults,
     itemsPerPage: 20,
@@ -34,21 +34,39 @@ export function makePaginationOptions(totalResults = 10000) {
   };
 }
 
-const paginationOptions = makePaginationOptions();
+export function initTrendPagination(totalResults) {
+  const options = makePaginationOptions(totalResults);
 
-export const paginationStart = new Pagination(
-  refs.paginationContainer,
-  paginationOptions
-);
+  const pagination = new Pagination(refs.paginationContainer, options);
+  // pagination.reset();
+  pagination.on('afterMove', updateTrendMoviesList);
+}
 
-paginationStart.on('afterMove', updateMoviesList);
+export function initSearchPagination(totalResults) {
+  const options = makePaginationOptions(totalResults);
 
-export async function updateMoviesList(event) {
-  const currentPageStart = event.page;
+  const pagination = new Pagination(refs.paginationContainer, options);
+  // pagination.reset();
+  pagination.on('afterMove', updateSearchMoviesList);
+}
 
-  console.log('currentPageStart -->', currentPageStart);
+async function updateTrendMoviesList(event) {
+  const currentPage = event.page;
 
-  await getTrendMovies(currentPageStart);
+  console.log('currentPage -->', currentPage);
+
+  await initTrendMoviesList(currentPage);
+
+  moveUp();
+}
+
+async function updateSearchMoviesList(event) {
+  const currentPage = event.page;
+  const query = refs.searchForm.elements.searchQuery.value;
+
+  console.log('currentPage -->', currentPage);
+
+  await initSearchMoviesList(query, currentPage);
 
   moveUp();
 }

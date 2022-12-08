@@ -2,75 +2,56 @@ import { Movies } from './fetch';
 import { markupFilmoteka } from './markup';
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import clearFilmoteka from './clearFilmoteka';
+import { initSearchPagination } from './pagination';
 import refs from './refs';
 import { APIKey } from './apikey';
 
-// const APIKey = 'e0e51fe83e5367383559a53110fae0e8';
-
-// *********************************************
-import Pagination from 'tui-pagination';
-import {
-  paginationStart,
-  updateMoviesList,
-  makePaginationOptions,
-} from './pagination';
-
-// *********************************************
-
-let searchValue = 'cat';
 const isHeaderMain = refs.header.classList.contains('header--home');
 if (isHeaderMain) {
   refs.searchForm.addEventListener('submit', onSubmitForm);
 }
 
-function onSubmitForm(evt) {
+async function onSubmitForm(evt) {
   evt.preventDefault();
-  searchValue = evt.currentTarget.elements.searchQuery.value;
-  clearFilmoteka();
+  const searchValue = evt.currentTarget.elements.searchQuery.value;
+
+  const totalResults = await initSearchMoviesList(searchValue);
+  console.log('totalResults ', totalResults);
+
+  initSearchPagination(totalResults);
+}
+
+// Оновлення списку результатів пошуку
+export async function initSearchMoviesList(query, page) {
   addLoadingSpinner();
 
-  Start();
-}
-
-async function Start() {
-  // await getGenres();
-
-  await searchMovies(searchValue);
-  // await getMovies1();
+  const totalResults = await getSearchMovies(query, page);
 
   removeLoadingSpinner();
+
+  return totalResults;
 }
 
-// Page from pagination, query from LS
-export async function searchMovies(query, page = 1) {
+async function getSearchMovies(query, page = 1) {
   const movies = new Movies(APIKey);
 
   try {
-    const { results } = await movies.searchMovies(query, page);
-    // async function getMovies1(page) {
-    //   const movies = new Movies(APIKey);
-
-    //   try {
-    //     const { results, total_results } = await movies.searchMovies(
-    //       searchValue,
-    //       page
-    //     );
-
-    //     await getPaginationBySearch(total_results);
+    const { results, total_results } = await movies.searchMovies(query, page);
 
     if (results.length === 0) {
       // throw new Error(
       //   'Sorry, there are no movies matching your search query. Please try again.'
       // );
       onInvalidSearchQuery();
-      return;
+      return null;
     }
 
     clearFilmoteka();
 
     markupFilmoteka(results);
+
+    return total_results;
   } catch (error) {
-    console.log(error.name);
     console.log(error.message);
   }
 }
@@ -87,27 +68,4 @@ function onInvalidSearchQuery() {
   };
 
   removeNotification();
-}
-
-// ************************************************
-
-async function getPaginationBySearch(total_results) {
-  const paginationOptions = makePaginationOptions(total_results);
-
-  paginationStart.off('afterMove', updateMoviesList);
-
-  const paginationBySearch = new Pagination(
-    refs.paginationContainer,
-    paginationOptions
-  );
-
-  paginationBySearch.on('afterMove', updateMoviesListBySearch);
-}
-
-async function updateMoviesListBySearch(event) {
-  const currentPageBySearch = event.page;
-
-  console.log('currentPageBySearch -->', currentPageBySearch);
-
-  await getMovies1(currentPageBySearch);
 }
