@@ -13,3 +13,6 @@ import './js/read-more';
 import './js/theme';
 import './js/queue';
 import './js/show-more-btn';
+
+import './js/pagination-new';
+import './js/search-new';
