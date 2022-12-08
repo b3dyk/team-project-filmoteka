@@ -14,7 +14,7 @@ const movies = new Movies(APIKey);
 
 export const showMore = new ShowMore({ selector: '.show-more', hidden: true });
 
-export const nextOptions = {
+const nextOptions = {
   nextPage: 1,
   async addNextTrendingMovies() {
     try {

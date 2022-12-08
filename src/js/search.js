@@ -3,7 +3,6 @@ import { markupFilmoteka, getGenres, APIKey } from './markup';
 import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import clearFilmoteka from './clearFilmoteka';
 import refs from './refs';
-import { nextOptions } from './pagination';
 import { showMore } from './pagination';
 
 // *********************************************
@@ -18,7 +17,31 @@ import {
 
 const movies = new Movies(APIKey);
 
-let searchValue = 'cat';
+const SEARCH_STORAGE_KEY = 'search-query';
+
+const nextOptions = {
+  nextPage: 1,
+  async addNextSearchingMovies() {
+    try {
+      this.nextPage += 1;
+      const { results, total_pages } = await movies.searchMovies(
+        SEARCH_STORAGE_KEY,
+        this.nextPage
+      );
+      markupFilmoteka(results);
+      showMore.enable();
+
+      if (total_pages === this.nextPage) {
+        showMore.hide();
+      }
+    } catch (error) {
+      console.log(error.name, error.message);
+    }
+  },
+};
+
+let searchValue = '';
+
 const isHeaderMain = refs.header.classList.contains('header--home');
 if (isHeaderMain) {
   refs.searchForm.addEventListener('submit', onSubmitForm);
@@ -26,9 +49,11 @@ if (isHeaderMain) {
 
 function onSubmitForm(evt) {
   evt.preventDefault();
+  localStorage.removeItem(SEARCH_STORAGE_KEY);
   nextOptions.nextPage = 1;
 
   searchValue = evt.currentTarget.elements.searchQuery.value;
+  localStorage.setItem(SEARCH_STORAGE_KEY, searchValue);
   clearFilmoteka();
   addLoadingSpinner();
 
@@ -59,6 +84,10 @@ async function getMovies1(page) {
     }
 
     clearFilmoteka();
+
+    if (results.length < 20) {
+      showMore.hide();
+    }
 
     markupFilmoteka(results);
   } catch (error) {
@@ -97,16 +126,17 @@ async function getPaginationBySearch(total_results) {
 }
 
 async function updateMoviesListBySearch(event) {
-  const currentPageBySearch = event.page;
+  console.log('currentPageBySearch -->', event.page);
 
-  console.log('currentPageBySearch -->', currentPageBySearch);
-
-  await getMovies1(currentPageBySearch);
+  nextOptions.nextPage = event.page;
+  await getAppendSearchMovies(event.page);
 }
 
 async function getAppendSearchMovies(page) {
   try {
-    const { results } = await movies.searchMovies(searchValue, page);
+    const query = localStorage.getItem(SEARCH_STORAGE_KEY);
+
+    const { results } = await movies.searchMovies(query, page);
 
     if (results.length < 20) {
       showMore.hide();
@@ -119,6 +149,8 @@ async function getAppendSearchMovies(page) {
   }
 }
 
+showMore.refs.blockShowMore.addEventListener('click', onShowMoreClick);
+
 function updateSearchList(event) {
   console.log('event.page -->', event.page);
 
@@ -126,4 +158,17 @@ function updateSearchList(event) {
   console.log('nextPage in updateSearchList -->', nextOptions.nextPage);
 
   getAppendSearchMovies(event.page);
+}
+
+function onShowMoreClick() {
+  showMore.disable();
+
+  await nextOptions.addNextSearchingMovies(paginationStart._currentPage);
+
+  paginationStart.off();
+  paginationStart.on('afterMove', updateSearchList);
+  paginationStart.movePageTo(nextOptions.nextPage);
+  console.log('nextPage after showMore -->', nextOptions.nextPage);
+  paginationStart.off();
+  paginationStart.on('afterMove', updateMoviesList);
 }
