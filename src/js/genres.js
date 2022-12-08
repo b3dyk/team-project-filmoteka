@@ -1,8 +1,8 @@
 import { Movies } from './fetch';
 import { APIKey } from './apikey';
 
-Start();
-function Start() {
+initGenres();
+function initGenres() {
   updateGenresInLS();
 }
 
