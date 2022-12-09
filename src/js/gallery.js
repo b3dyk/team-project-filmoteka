@@ -2,7 +2,6 @@ import { addLoadingSpinner, removeLoadingSpinner } from './loading-spinner';
 import { Movies } from './fetch';
 import clearFilmoteka from './clear-filmoteka';
 import { markupFilmoteka } from './markup';
-// import { getGenres } from './genres';
 import { APIKey } from './apikey';
 import refs from './refs';
 import ShowMore from './show-more-btn';
@@ -10,25 +9,15 @@ import ShowMore from './show-more-btn';
 const movies = new Movies(APIKey);
 export const showMore = new ShowMore({ selector: '.show-more', hidden: true });
 
-let searchValue = 'cat';
 const isHeaderMain = refs.header.classList.contains('header--home');
 
 if (isHeaderMain) {
-  startGallery();
-  refs.searchForm.addEventListener('submit', onSubmitForm);
-}
-
-function onSubmitForm(evt) {
-  evt.preventDefault();
-  searchValue = evt.currentTarget.elements.searchQuery.value;
-  clearFilmoteka();
   startGallery();
 }
 
 async function startGallery() {
   addLoadingSpinner();
 
-  // await getGenres();
   await getTrendMovies();
 
   removeLoadingSpinner();
@@ -39,7 +28,7 @@ export async function getTrendMovies(page = 1) {
   try {
     const { results, total_pages } = await movies.getTrendingMovies(page);
 
-    if (results.length === 0) {
+    if (!results.length) {
       throw new Error(
         'Sorry, there are no movies matching your search query. Please try again.'
       );

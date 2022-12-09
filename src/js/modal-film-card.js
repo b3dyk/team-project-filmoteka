@@ -5,9 +5,7 @@ import createBtnWatched from './watched-create-btn';
 import createBtnQueue from './queue-create-btn';
 import { addLibraryListWatched } from './watched';
 import { addLibraryListQueue } from './queue';
-const bodyScrollLock = require('body-scroll-lock');
 import foto from '../images/poster/poster-not-found-desk.jpg';
-
 
 export default class ModalMovie {
   constructor(
@@ -155,19 +153,18 @@ export default class ModalMovie {
       original_title,
       genres,
       overview,
-      video,
       id,
     } = data;
 
     let img = `${this.IMAGE_URL}${poster_path}`;
-    if (poster_path === null) {
+    if (!poster_path) {
       img = foto;
     }
 
-    if (overview.length === 0) {
+    if (!overview.length) {
       overview = 'There is no description';
     }
-    if (genres.length === 0) {
+    if (!genres.length) {
       genres = [
         {
           id: 0,
@@ -211,20 +208,27 @@ export default class ModalMovie {
     createBtnWatched(id);
     createBtnQueue(id);
 
-    if (video) {
-      this.startListenTrailerClick(id);
-    }
+    this.startListenTrailerClick(id);
   }
 
-  startListenTrailerClick(id) {
+  async startListenTrailerClick(id) {
     const trailerRun = this.modalContent.querySelector('[data-trailer]');
 
+    const movies = new Movies(this.APIKey);
+    const { results } = await movies.getMovieTrailers(id);
+
+    // Якщо немає результатів, то нічого не робимо
+    if (!results.length) return;
+
+    const youTubeVideo = results.find(
+      vid => vid.site === 'YouTube' && vid.type === 'Trailer'
+    );
+
+    // Якщо немає трейлерів, то нічого не робимо
+    if (!youTubeVideo) return;
+
+    trailerRun.classList.remove('visually-hidden');
     trailerRun.addEventListener('click', async () => {
-      const movies = new Movies(this.APIKey);
-      const { results } = await movies.getMovieTrailers(id);
-
-      const youTubeVideo = results.find(vid => vid.site === 'YouTube');
-
       const instance = basicLightbox.create(`
         <iframe src="https://www.youtube.com/embed/${youTubeVideo.key}" width="560" height="315" frameborder="0"></iframe>
       `);
