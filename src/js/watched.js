@@ -19,7 +19,7 @@ const refs = {
 
 try {
   refs.modalCard.addEventListener('click', addWatched);
-} catch (error) {}
+} catch (error) { }
 
 let watchedFilm = [];
 let watchedFilmId = [];
@@ -30,7 +30,7 @@ if (isMyLibMain) {
 
   try {
     refs.watchedBtn.addEventListener('click', addLibraryListWatched);
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function createWatched() {
@@ -57,6 +57,7 @@ function checkWatched() {
     watchedFilm = JSON.parse(localStorage.getItem('watched'));
     watchedFilmId = JSON.parse(localStorage.getItem('watchedId'));
   }
+
 }
 
 // Запис в LocalStorage
@@ -117,7 +118,7 @@ export async function addLibraryListWatched() {
     refs.libraryList.innerHTML = '';
     refs.watchedBtn.classList.add('button--active');
     refs.queueBtn.classList.remove('button--active');
-  } catch (error) {}
+  } catch (error) { }
 
   if (localStorage.getItem('watched')) {
     markupMyLibrary(watchedFilm);

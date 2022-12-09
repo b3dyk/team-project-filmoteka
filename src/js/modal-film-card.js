@@ -8,6 +8,7 @@ import { addLibraryListQueue } from './queue';
 const bodyScrollLock = require('body-scroll-lock');
 import foto from '../images/poster/poster-not-found-desk.jpg';
 
+
 export default class ModalMovie {
   constructor(
     {
@@ -45,12 +46,8 @@ export default class ModalMovie {
         this.onOpenModal.bind(this)
       );
     }
-
     this.btnClose.addEventListener('click', this.onCloseModal.bind(this));
-    this.backdrop.addEventListener(
-      'click',
-      this.toCloseModalClickBackdrop.bind(this)
-    );
+    this.backdrop.addEventListener('click', this.toCloseModalClickBackdrop.bind(this));
   }
 
   async fetchMovie(movie) {
@@ -64,7 +61,7 @@ export default class ModalMovie {
     }
     this.openModal.classList.remove('is-hidden');
     const movieId = e.target.closest('.filmoteka__item').dataset.id;
-    this.getMovieDetals(movieId);
+
     bodyScrollLock.disableBodyScroll(document.body);
     const isBackdrop = !this.backdrop.classList.contains('is-hidden');
     if (isBackdrop) {
@@ -73,6 +70,7 @@ export default class ModalMovie {
         this.toCloseModalClickEscape.bind(this)
       );
     }
+    this.onOpenInformationMovie(movieId);
   }
 
   getMovieDetals(movie) {
@@ -85,7 +83,26 @@ export default class ModalMovie {
         console.log(error.message);
       });
   }
+  onOpenInformationMovie(movieId) {
+    const watchedMovies = JSON.parse(localStorage.getItem('watched'));
+    const queueedMovies = JSON.parse(localStorage.getItem('queue'));
 
+    if (watchedMovies) {
+      const movieLocalStorage = watchedMovies.find(item => item.id === Number(movieId));
+      if (movieLocalStorage) {
+        this.onMakeMarkupModal(movieLocalStorage);
+        return
+      }
+    }
+    if (queueedMovies) {
+      const movieLocalStorage = queueedMovies.find(item => item.id === Number(movieId));
+      if (movieLocalStorage) {
+        this.onMakeMarkupModal(movieLocalStorage);
+        return
+      }
+    }
+    this.getMovieDetals(movieId)
+  }
   toCloseModalClickEscape(e) {
     const isEscape = e.code === 'Escape';
     if (isEscape) {
@@ -106,18 +123,18 @@ export default class ModalMovie {
     if (document.querySelector('#watched-btn')) {
       if (
         document.querySelector('#watched-btn').classList[0] ===
-          'button--active' ||
+        'button--active' ||
         document.querySelector('#watched-btn').classList[1] ===
-          'button--active' ||
+        'button--active' ||
         document.querySelector('#watched-btn').classList[2] === 'button--active'
       ) {
         addLibraryListWatched();
       }
       if (
         document.querySelector('#queue-btn').classList[0] ===
-          'button--active' ||
+        'button--active' ||
         document.querySelector('#queue-btn').classList[1] ===
-          'button--active' ||
+        'button--active' ||
         document.querySelector('#queue-btn').classList[2] === 'button--active'
       ) {
         addLibraryListQueue();
@@ -165,11 +182,10 @@ export default class ModalMovie {
     const markup = `
     <div class="movie-details__preview-wrapper" data-id="${id}">
         <img class="movie-details__img" src="${img}"/>
-        ${
-          video
-            ? '<button class="button movie-details__button-trailer modal__button" data-trailer type="button">Show trailer</button>'
-            : ''
-        }
+        ${video
+        ? '<button class="button movie-details__button-trailer modal__button" data-trailer type="button">Show trailer</button>'
+        : ''
+      }
     </div>
     <div class="movie-details__thumb">
     <div class="movie-details__content"><h3 class="movie-details__title">${title}</h3>
