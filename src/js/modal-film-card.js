@@ -6,6 +6,7 @@ import createBtnQueue from './queue-create-btn';
 import { addLibraryListWatched } from './watched';
 import { addLibraryListQueue } from './queue';
 import foto from '../images/poster/poster-not-found-desk.jpg';
+const bodyScrollLock = require('body-scroll-lock');
 
 export default class ModalMovie {
   constructor(
@@ -179,30 +180,27 @@ export default class ModalMovie {
     const markup = `
     <div class="movie-details__preview-wrapper" data-id="${id}">
         <img class="movie-details__img" src="${img}"/>
-        ${video
-        ? '<button class="button movie-details__button-trailer modal__button" data-trailer type="button">Show trailer</button>'
-        : ''
-      }
+      <button class="button movie-details__button-trailer modal__button visually-hidden" data-trailer type="button">Show trailer</button>
     </div>
-    <div class="movie-details__thumb">
+  <div class="movie-details__thumb">
     <div class="movie-details__content"><h3 class="movie-details__title">${title}</h3>
-    <table><tbody class="table"><tr>
-      <td class="movie-details__name">Vote / Votes</td><td class="movie-details__slash"><span class="movie-details__vote movie-details__vote--average">${vote_average}</span> / <span class="movie-details__vote">${vote_count}</span></td>
-    </tr><tr>
-      <td class="movie-details__name">Popularity</td><td class="movie-details__value">${popularity}</td>
-    </tr><tr>
-      <td class="movie-details__name">Original Title</td><td class="movie-details__value">${original_title}</td>
-    </tr><tr>
-      <td class="movie-details__name">Genres</td><td class="movie-details__genres">${genres}</td>
-    </tr></tbody></table>
-    <h4 class="movie-details__about">ABOUT</h4>
-    <p class="movie-details__text">${overview}</p></div>
+      <table><tbody class="table"><tr>
+        <td class="movie-details__name">Vote / Votes</td><td class="movie-details__slash"><span class="movie-details__vote movie-details__vote--average">${vote_average}</span> / <span class="movie-details__vote">${vote_count}</span></td>
+      </tr><tr>
+          <td class="movie-details__name">Popularity</td><td class="movie-details__value">${popularity}</td>
+        </tr><tr>
+          <td class="movie-details__name">Original Title</td><td class="movie-details__value">${original_title}</td>
+        </tr><tr>
+          <td class="movie-details__name">Genres</td><td class="movie-details__genres">${genres}</td>
+        </tr></tbody></table>
+      <h4 class="movie-details__about">ABOUT</h4>
+      <p class="movie-details__text">${overview}</p></div>
     <div class="movie-details__buttons">
-    <button class="button modal__button" type="button" id="modal__watched-button">Add to Watched</button>
-    <button id="modal__button-queue" class="button modal__button" type="button">Add to Queue</button>
+      <button class="button modal__button" type="button" id="modal__watched-button">Add to Watched</button>
+      <button id="modal__button-queue" class="button modal__button" type="button">Add to Queue</button>
     </div>
-    </div>
-    `;
+  </div>
+`;
     this.modalContent.insertAdjacentHTML('beforeend', markup);
 
     createBtnWatched(id);
@@ -216,7 +214,6 @@ export default class ModalMovie {
 
     const movies = new Movies(this.APIKey);
     const { results } = await movies.getMovieTrailers(id);
-
     // Якщо немає результатів, то нічого не робимо
     if (!results.length) return;
 
@@ -224,14 +221,14 @@ export default class ModalMovie {
       vid => vid.site === 'YouTube' && vid.type === 'Trailer'
     );
 
+
     // Якщо немає трейлерів, то нічого не робимо
     if (!youTubeVideo) return;
-
     trailerRun.classList.remove('visually-hidden');
     trailerRun.addEventListener('click', async () => {
       const instance = basicLightbox.create(`
-        <iframe src="https://www.youtube.com/embed/${youTubeVideo.key}" width="560" height="315" frameborder="0"></iframe>
-      `);
+  < iframe src = "https://www.youtube.com/embed/${youTubeVideo.key}" width = "560" height = "315" frameborder = "0" ></ >
+    `);
 
       instance.show();
     });
