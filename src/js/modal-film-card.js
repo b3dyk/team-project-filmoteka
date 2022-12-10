@@ -165,7 +165,7 @@ export default class ModalMovie {
     const markup = `
     <div class="movie-details__preview-wrapper" data-id="${id}">
         <img class="movie-details__img" src="${img}"/>
-         <button class="modal-btn-trailer" data-trailer type="button">
+         <button class="modal-btn-trailer visually-hidden" data-trailer type="button">
       <img class="youtube-icon" src="https://download.logo.wine/logo/YouTube/YouTube-Icon-Full-Color-Logo.wine.png" width="50" height="30">
     </button>
     </div>
